@@ -260,11 +260,26 @@ void zugAusfuehren(int spielfeld[GROESSE_Y][GROESSE_X], const int aktuellerSpiel
 
 }
 
+/**
+ * @brief Funktion, die die Anzahl der möglichen Züge zurückgibt
+ *
+ * @param[in] spielfeld Das aktuelle Spielfeld
+ * @param[in] aktuellerSpieler Der aktueller Spieler
+ * @return anzahlMöglicherZüge Die Anzahl der möglichen Züge die der Spieler machen kann
+ */
+
 int moeglicheZuege(const int spielfeld[GROESSE_Y][GROESSE_X], const int aktuellerSpieler)
 {
-    // Hier erfolgt jetzt Ihre Implementierung ...
+	int anzahlMoeglicherZuege = 0;
+    for (int i = 0; i < GROESSE_X; i++) {
+    	for (int j = 0; j < GROESSE_Y; j++) {
+    		if (zugGueltig(spielfeld, aktuellerSpieler, i, j)) {
+    			anzahlMoeglicherZuege++;
+    		}
+    	}
+    }
     
-    return 0;
+    return anzahlMoeglicherZuege;
 }
 
 
@@ -309,9 +324,31 @@ bool menschlicherZug(int spielfeld[GROESSE_Y][GROESSE_X], const int aktuellerSpi
     zugAusfuehren(spielfeld, aktuellerSpieler, posX, posY);
     std::cout << std::endl << "Spieler " << aktuellerSpieler << " setzt auf " << (char) (posX + 65) << (posY + 1) << std::endl;
 
+    zeigeSpielfeld(spielfeld);
     return true;
 }
 
+/**
+ * @brief Funktion zum wechseln zwischen den Spielern
+ *
+ * @param[in] pointer auf den aktuellen Spieler
+ * @param[out] pointer auf neuen Spieler
+ */
+void naechsterSpieler(int* aktuellerSpielerPtr) {
+	*aktuellerSpielerPtr = *aktuellerSpielerPtr % 2 + 1;
+}
+
+
+bool naechsterZug(int spielfeld[GROESSE_Y][GROESSE_X], int aktuellerSpieler, const int spielerTyp[2]) {
+	bool status;
+	if (spielerTyp[aktuellerSpieler] == MENSCH) {
+		status = menschlicherZug(spielfeld, aktuellerSpieler);
+	} else {
+		status = computerZug(spielfeld, aktuellerSpieler);
+	}
+
+	return status;
+}
 
 void spielen(const int spielerTyp[2])
 {
@@ -325,11 +362,31 @@ void spielen(const int spielerTyp[2])
 
     // solange noch Zuege bei einem der beiden Spieler moeglich sind
     //
-    // Hier erfolgt jetzt Ihre Implementierung ...
+    while (true) { /**< läuft bis zum abbruch*/
+    	int status = naechsterZug(spielfeld, aktuellerSpieler, spielerTyp);
+    	if (status == false) {
+    		naechsterSpieler(&aktuellerSpieler); /**< wechselt auf den naechsten Spieler*/
+    		status = naechsterZug(spielfeld, aktuellerSpieler, spielerTyp); /**< doppelter fail? => abbruch des games*/
+    		if (status == false) break; /**< keine weiteren Zuege*/
+    	}
+    	naechsterSpieler(&aktuellerSpieler);
+
+    	zeigeSpielfeld(spielfeld);
+
+
+    }
     
     switch (gewinner(spielfeld))
     {
-        // Hier erfolgt jetzt Ihre Implementierung ...
+    	case 0:
+    		std::cout << "Unentschieden" << std::endl;
+    		break;
+    	case 1:
+    		std::cout << "Spieler 1 hat gewonnen" << std::endl;
+    		break;
+    	case 2:
+    		std::cout << "Spieler 2 hat gewonnen" << std::endl;
+    		break;
     }
 }
 
@@ -352,16 +409,17 @@ int main()
     
     // Die folgenden drei Zeilen werden auskommentiert oder geloescht, nachdem Sie die Funktion spielen()
     // implementiert haben (waeren sonst doppelt)
-    int spielfeld[GROESSE_Y][GROESSE_X];
+    //int spielfeld[GROESSE_Y][GROESSE_X];
 
-    initialisiereSpielfeld(spielfeld);
+    //initialisiereSpielfeld(spielfeld);
 
-    zeigeSpielfeld(spielfeld);
+    //zeigeSpielfeld(spielfeld);
 
     // int spielerTyp[2] = { COMPUTER, COMPUTER };  // Feld, das Informationen ueber den Typ des Spielers enthaelt. MENSCH(=1) oder COPMUTER(=2)
     // spielen(spielerTyp);
     //
-    // Hier erfolgt jetzt Ihre Implementierung ...
+    int spielerTyp[2] = {COMPUTER, COMPUTER};
+    spielen(spielerTyp);
     
     return 0;
 }

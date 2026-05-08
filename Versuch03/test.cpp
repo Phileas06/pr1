@@ -88,6 +88,16 @@ bool aufSpielfeldTest(const int posX, const int posY, const bool richtig, const 
     return 0;
 }
 
+/**@brief Funktion zum Testen der zugGueltig Funktion
+ *
+ * @param[in] eingabeFeld Feld mit unterschiedlichen Anordnungen der Steine
+ * @param[in] spieler Aktueller Spieler
+ * @param[in] posX zu testene X-Position
+ * @param[in] posY zu testene Y-Position
+ * @param[in] testNummer Bezifferung der einzelnen Tests (0-indiziert)
+ *
+ * @return True wenn der Test bestanden wurde, sonst false
+ */
 
 bool zugGueltigTest(const int eingabeFeld[GROESSE_Y][GROESSE_X], const int spieler, const int posX,
                      const int posY, const bool richtig, const int testNummer)
@@ -107,13 +117,28 @@ bool zugGueltigTest(const int eingabeFeld[GROESSE_Y][GROESSE_X], const int spiel
         else
         {
         	std::cout << "Test " << testNummer + 1 << " fehlgeschlagen" << std::endl << std::endl;
-        	std::cout << "Feld Position: " << posX << " : " << posY << std::endl;
+        	if (AUSFUEHRLICH == 1) {
+        		zeigeSpielfeld(eingabeFeld);
+        		std::cout << "Funktion fehlgeschlagen bei Position: (" << posX << "," << posY << ")" << std::endl;
+        	}
         	return false;
         }
 
     return 0;
 }
 
+/**
+ * @brief Funktion zum Testen der Funktion zugAusfuehren()
+ *
+ * @param[in] eingabeFeld Spielfeld mit unterschiedlichen Anordnungen
+ * @param[in] ergebnisFeld Spielfeld mit richtiger Anordnung nach zugAusfuehren
+ * @param[in] spieler Der aktuelle Spieler
+ * @param[in] posX Die aktuelle X-Position
+ * @param[in] posY Die aktuelle Y-Position
+ * @param[in] testNummer Bezifferung der einzelnen Tests (0-indiziert)
+ *
+ * @return True wenn die Funktion zugAusfuehren richtig implementiert wurde, sonst false
+ */
 
 bool zugAusfuehrenTest(int eingabeFeld[GROESSE_Y][GROESSE_X], const int ergebnisFeld[GROESSE_Y][GROESSE_X],
                        const int spieler, const int posX, const int posY, const int testNummer)
@@ -145,7 +170,13 @@ bool zugAusfuehrenTest(int eingabeFeld[GROESSE_Y][GROESSE_X], const int ergebnis
         else
         {
         	std::cout << "Test " << testNummer + 1 << " fehlgeschlagen" << std::endl << std::endl;
-        	std::cout << "Feld Position: " << posX << " : " << posY << std::endl;
+        	if (AUSFUEHRLICH == 1)
+        		{
+        			std::cout << "Falsches Feld: " << std::endl;
+        			zeigeSpielfeld(eingabeFeld);
+        			std::cout << "Richtiges Feld " << std::endl;
+        			zeigeSpielfeld(ergebnisFeld);
+        		}
         	return false;
         }
 
@@ -153,13 +184,45 @@ bool zugAusfuehrenTest(int eingabeFeld[GROESSE_Y][GROESSE_X], const int ergebnis
     return 0;
 }
 
+/**
+ * @brief Funktion zum Testen der Funktion moeglichenZuege
+ *
+ * @param[in] eingabefeld Spielfeld mit unterschiedlichen Anordnungen
+ * @param[in] spieler Der aktuelle Spieler
+ * @param[in] richtig Referenzwert zur Berurteilung des Ergebnisses
+ * @param[in] testNummer Bezifferung der einzelnen Tests
+ *
+ * @return True wenn die Funktion richtig funktioniert, sonst false
+ */
+
+
 bool moeglicheZuegeTest(const int eingabeFeld[GROESSE_Y][GROESSE_X], const int spieler,
                          const int richtig, const int testNummer)
 {
     // ueberprueft, ob alle moeglichen Zuege fuer einen Spieler gefunden werden
     // wenn AUSFUEHRLICH gleich 1 wird zusaetzlich das Spielfeld, der berechnete falsche und der richtige Wert ausgegeben
     //
-    // Hier erfolgt jetzt Ihre Implementierung ...
+    std::cout << "Fuehre Test " << testNummer + 1 << " fuer 'moeglicheZuege()' aus ..." << std::endl;
+	std::cout << "----------------------------------" << std::endl << std::endl;
+	int anzahlMoeglicheZuege = moeglicheZuege(eingabeFeld, spieler);
+
+	if (richtig == anzahlMoeglicheZuege)
+        {
+            std::cout << "Test " << testNummer + 1 << " bestanden!" << std::endl << std::endl;
+            return true;
+        }
+    else
+        {
+        	std::cout << "Test " << testNummer + 1 << " fehlgeschlagen" << std::endl << std::endl;
+        	if (AUSFUEHRLICH == 1)
+        		{
+        			zeigeSpielfeld(eingabeFeld);
+        			std::cout << "Berechneter Wert: " << anzahlMoeglicheZuege << std::endl;
+        			std::cout << "Richtiger Wert: " << richtig << std::endl;
+        		}
+
+        	return false;
+        }
 
     return 0;
 }
@@ -590,7 +653,13 @@ bool ganzenTestAusfuehren()
 
         for (int i = 0; i < 2; i++)
         {
-            // Hier erfolgt jetzt Ihre Implementierung (entsprechende Testfunktion aufrufen) ...
+            bool tmp_ergebnis = moeglicheZuegeTest(eingabeFeld[i], spieler[i], korrektesErgebnis[i], i);
+            if (gesamtErgebnis == true && tmp_ergebnis== false)
+            {
+            	gesamtErgebnis = false;
+            }
+
+
         }
     }
 
