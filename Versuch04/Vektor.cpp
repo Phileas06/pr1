@@ -7,8 +7,10 @@
 // Inhalt: Sourcedatei der Klasse Vektor
 //////////////////////////////////////////////////////////////////////////////
 
+#define _USE_MATH_DEFINES
 #include "Vektor.h"
-#include <cmath.h>
+#include <cmath>
+
 
 Vektor::Vektor(double inX, double inY, double inZ) : x(inX), y(inY), z(inZ)
 {
@@ -67,15 +69,16 @@ double Vektor::skalarProd(const Vektor& input) const {
  * @brief function calculates and returns the angle between two vectors
  */
 
-double Vektor::winkel(const Vektor& input) const {
+double Vektor::winkel(const Vektor& input) const { //evtl. hier noch in grad umrechnen
 
 	double skalar = this->skalarProd(input);
 	double lengthA = this->laenge();
 	double lengthB = input.laenge();
 
-	double winkel = acos(skalar/(lengthA + lengthB));
+	double winkel = acos(skalar/(lengthA + lengthB)); //winkel in rad
+	double winkelInDeg = winkel * 180/ M_PI;
 
-	return winkel;
+	return winkelInDeg;
 }
 
 
@@ -83,23 +86,13 @@ double Vektor::winkel(const Vektor& input) const {
  * @brief calculates the vector rotated by given degrees around the z-axis
  */
 
-Vektor Vektor::rotiereUmZ(double rad) {
+void Vektor::rotiereUmZ(const double rad) {
 
-	double rotateMatrix[3][3] = {{cos(rad), -sin(rad), 0}, {sin(rad), cos(rad), 0}, {0, 0, 1}};
+	double rotateMatrix[3][3] = {{cos(rad), -sin(rad), 0}, {sin(rad), cos(rad), 0}, {0, 0, 1}}; //matrix used to calculate the rotation
 
-	/** < Matrix Vektor Produkt*/
+	this->x = this->x * rotateMatrix[0][0] + this->y * rotateMatrix[0][1] + this->z * rotateMatrix[0][2];
+	this->y = this->x * rotateMatrix[1][0] + this->y * rotateMatrix[1][1] + this->z * rotateMatrix[1][2];
+	this->x = this->x * rotateMatrix[2][0] + this->y * rotateMatrix[2][1] + this->z * rotateMatrix[2][2];
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
